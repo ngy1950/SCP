@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="namgiyun.home.hotel.dao.mapper.HotelMapper">
+	<select id="getHotels" resultType="HotelList" >
+		<!-- SELECT h.HOTEL_NUM, h.HOTEL_GUEST, h.HOTEL_BEDROOM, h.HOTEL_BED, h.HOTEL_BATHROOM, h.HOTEL_ACCOUNT, h.HOTEL_POST, h.HOTEL_ADDRESS, h.HOTEL_DETAILADDRESS, h.HOTEL_EXTRAADDRESS, h.HOTEL_NAME, h.USER_ID,
+			   hd.HOTEL_NUM, hd.HOTEL_IMG1, hd.HOTEL_IMG2, hd.HOTEL_IMG3, hd.HOTEL_COST, hd.HOTEL_EXTRAFEE, hd.HOTEL_RULE, hd.HOTEL_WIFI, hd.HOTEL_LOUNGE, hd.HOTEL_BATHTUB, hd.HOTEL_FITNESS, hd.HOTEL_PARKING, hd.HOTEL_POOL, hd.HOTEL_TV, hd.HOTEL_BREAKFAST, hd.HOTEL_ETC, hd.USER_ID
+		FROM hotels h JOIN hotel_details hd
+		ON (h.HOTEL_NUM = hd.HOTEL_NUM) -->
+		SELECT A.HOTEL_NUM hotelNum, A.HOTEL_NAME hotelName, A.HOTEL_BEDROOM bedRoom, A.HOTEL_BED bed, A.HOTEL_IMG1 hotelImg1, B.STAR star
+		FROM (SELECT H.HOTEL_NUM, HD.HOTEL_IMG1, H.HOTEL_NAME, H.HOTEL_BEDROOM, H.HOTEL_BED
+		      FROM HOTELS H, HOTEL_DETAILS HD
+		      WHERE H.HOTEL_NUM = HD.HOTEL_NUM) A,
+		     (SELECT HOTEL_NUM, TRUNC(AVG(REV_STAR),1) AS STAR
+		      FROM REVIEWS
+		      GROUP BY HOTEL_NUM) B
+		WHERE A.HOTEL_NUM = B.HOTEL_NUM(+)
+	</select>
+	
+	<resultMap type="Hotel" id="Hotel">
+		<id column="HOTEL_NUM" property="hotelNum"/>
+		<result column="HOTEL_GUEST" property="guest"/>
+		<result column="HOTEL_BEDROOM" property="bedRoom"/>
+		<result column="HOTEL_BED" property="bed"/>
+		<result column="HOTEL_BATHROOM" property="bathRoom"/>
+		<result column="HOTEL_ACCOUNT" property="account"/>
+		<result column="HOTEL_POST" property="post"/>
+		<result column="HOTEL_ADDRESS" property="address"/>
+		<result column="HOTEL_DETAILADDRESS" property="detailAddress"/>
+		<result column="HOTEL_EXTRAADDRESS" property="extraAddress"/>
+		<result column="HOTEL_NAME" property="hotelName"/>
+		<result column="USER_ID" property="userId"/>
+		<result column="HOTEL_IMG1" property="hotelImg1"/>
+		<result column="HOTEL_IMG2" property="hotelImg2"/>
+		<result column="HOTEL_IMG3" property="hotelImg3"/>
+		<result column="HOTEL_COST" property="hotelCost"/>
+		<result column="HOTEL_EXTRAFEE" property="extraFee"/>
+		<result column="HOTEL_RULE" property="rule"/>
+		<result column="HOTEL_WIFI" property="wifi"/>
+		<result column="HOTEL_LOUNGE" property="lounge"/>
+		<result column="HOTEL_BATHTUB" property="bathtub"/>
+		<result column="HOTEL_FITNESS" property="fitness"/>
+		<result column="HOTEL_PARKING" property="parking"/>
+		<result column="HOTEL_POOL" property="pool"/>
+		<result column="HOTEL_TV" property="tv"/>
+		<result column="HOTEL_BREAKFAST" property="breakfast"/>
+		<result column="HOTEL_ETC" property="etc"/>
+		<result column="RESV_CHECKIN" property="resv_checkin"/>
+		<result column="RESV_CHECKOUT" property="resv_checkout"/>
+	</resultMap>
+	
+	<select id="myHotels" resultType="MyHotel">
+		SELECT H.HOTEL_NUM hotelNum, HD.HOTEL_IMG1 hotelImg1, H.HOTEL_NAME hotelName
+		FROM HOTELS H, HOTEL_DETAILS HD
+		WHERE H.HOTEL_NUM = HD.HOTEL_NUM
+		AND H.USER_ID = #{userId}
+	</select>
+	
+	<select id="getHotel" resultMap="Hotel">
+		select h.HOTEL_NUM, h.HOTEL_GUEST, h.HOTEL_BEDROOM, h.HOTEL_BED, h.HOTEL_BATHROOM, h.HOTEL_POST, h.HOTEL_ADDRESS, h.HOTEL_DETAILADDRESS, h.HOTEL_EXTRAADDRESS, h.HOTEL_ACCOUNT, h.HOTEL_NAME, u.user_name, hd.HOTEL_IMG1, hd.HOTEL_IMG2, hd.HOTEL_IMG3, hd.HOTEL_COST, hd.HOTEL_EXTRAFEE, hd.HOTEL_RULE, hd.HOTEL_WIFI, hd.HOTEL_LOUNGE, hd.HOTEL_BATHTUB, hd.HOTEL_FITNESS, hd.HOTEL_PARKING, hd.HOTEL_POOL, hd.HOTEL_TV, hd.HOTEL_BREAKFAST, hd.HOTEL_ETC, hd.USER_ID
+		from hotels h, hotel_details hd, users u
+		where h.hotel_num = hd.hotel_num
+		and h.user_id = u.user_id
+		and h.hotel_num = #{hotel_num}
+	</select>
+	
+	<select id="searchHotels" resultType="HotelList" parameterType="Hotel">
+		SELECT A.HOTEL_NUM hotelNum, A.HOTEL_NAME hotelName, A.HOTEL_BEDROOM bedRoom, A.HOTEL_BED bed, A.HOTEL_IMG1 hotelImg1, A.HOTEL_GUEST guest, A.HOTEL_ADDRESS address, B.STAR star
+		FROM (SELECT H.HOTEL_NUM, HD.HOTEL_IMG1, H.HOTEL_NAME, H.HOTEL_BEDROOM, H.HOTEL_BED, H.HOTEL_GUEST, H.HOTEL_ADDRESS
+		      FROM HOTELS H, HOTEL_DETAILS HD
+		      WHERE H.HOTEL_NUM = HD.HOTEL_NUM
+		      <![CDATA[
+          	  AND H.HOTEL_GUEST >= #{guest,jdbcType=INTEGER}
+          	  ]]>
+          	  AND H.HOTEL_ADDRESS LIKE '%'||#{address,jdbcType=VARCHAR}||'%') A,
+		     (SELECT HOTEL_NUM, TRUNC(AVG(REV_STAR), 1) AS STAR
+		      FROM REVIEWS
+		      GROUP BY HOTEL_NUM) B,
+         	 (SELECT H.HOTEL_NUM
+          	  FROM HOTELS H, RESERVATIONS R
+          	  WHERE H.HOTEL_NUM = R.HOTEL_NUM
+          	  <![CDATA[
+          	  AND NOT((R.RESV_CHECKIN < #{resv_checkout,jdbcType=VARCHAR}) AND (R.RESV_CHECKOUT > #{resv_checkin,jdbcType=VARCHAR}))
+          	  ]]>
+          	  GROUP BY H.HOTEL_NUM
+          	  UNION
+          	  SELECT H.HOTEL_NUM
+          	  FROM RESERVATIONS R, HOTELS H
+          	  WHERE H.HOTEL_NUM = R.HOTEL_NUM(+)
+          	  AND RESV_CHECKIN IS NULL AND RESV_CHECKOUT IS NULL
+          	  GROUP BY H.HOTEL_NUM) C
+		WHERE A.HOTEL_NUM = B.HOTEL_NUM(+)
+    	AND A.HOTEL_NUM = C.HOTEL_NUM
+	</select>
+	
+	<insert id="addHotel" parameterType="Hotel">
+		INSERT INTO HOTELS
+		VALUES (HOTEL_SEQ.nextval, #{guest,jdbcType=NUMERIC}, #{bedRoom,jdbcType=VARCHAR}, #{bed,jdbcType=VARCHAR}, #{bathRoom,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{post,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{detailAddress,jdbcType=VARCHAR}, #{extraAddress,jdbcType=VARCHAR}, #{hotelName,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="addDetail" parameterType="Hotel">
+		INSERT INTO hotel_details
+		VALUES (HOTEL_SEQ.CURRVAL, #{hotelImg1,jdbcType=VARCHAR}, #{hotelImg2,jdbcType=VARCHAR}, #{hotelImg3,jdbcType=VARCHAR}, #{hotelCost,jdbcType=NUMERIC}, #{extraFee,jdbcType=NUMERIC}, #{rule,jdbcType=VARCHAR}, #{wifi,jdbcType=NUMERIC}, #{lounge,jdbcType=NUMERIC}, #{bathtub,jdbcType=NUMERIC}, #{fitness,jdbcType=NUMERIC}, #{parking,jdbcType=NUMERIC}, #{pool,jdbcType=NUMERIC}, #{tv,jdbcType=NUMERIC}, #{breakfast,jdbcType=NUMERIC}, #{etc,jdbcType=NUMERIC}, #{userId,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateHotel" parameterType="Hotel">
+		UPDATE HOTELS
+		set HOTEL_GUEST = #{guest,jdbcType=NUMERIC}, HOTEL_BEDROOM = #{bedRoom,jdbcType=VARCHAR}, HOTEL_BED = #{bed,jdbcType=VARCHAR}, HOTEL_BATHROOM = #{bathRoom,jdbcType=VARCHAR}, HOTEL_ACCOUNT = #{account,jdbcType=VARCHAR}, HOTEL_POST = #{post,jdbcType=VARCHAR}, HOTEL_ADDRESS = #{address,jdbcType=VARCHAR}, HOTEL_DETAILADDRESS = #{detailAddress,jdbcType=VARCHAR}, HOTEL_EXTRAADDRESS = #{extraAddress,jdbcType=VARCHAR}, HOTEL_NAME = #{hotelName,jdbcType=VARCHAR}
+		where HOTEL_NUM = #{hotelNum}
+	</update>
+	
+	<update id="updateDetail" parameterType="Hotel">
+		UPDATE HOTEL_DETAILS
+		set HOTEL_WIFI = #{wifi,jdbcType=NUMERIC}, HOTEL_LOUNGE = #{lounge,jdbcType=NUMERIC}, HOTEL_BATHTUB = #{bathtub,jdbcType=NUMERIC}, HOTEL_FITNESS = #{fitness,jdbcType=NUMERIC}, HOTEL_PARKING = #{parking,jdbcType=NUMERIC}, HOTEL_POOL = #{pool,jdbcType=NUMERIC}, HOTEL_TV = #{tv,jdbcType=NUMERIC}, HOTEL_BREAKFAST = #{breakfast,jdbcType=NUMERIC}, HOTEL_ETC = #{etc,jdbcType=NUMERIC}, HOTEL_IMG1 = #{hotelImg1,jdbcType=VARCHAR}, HOTEL_IMG2 = #{hotelImg2,jdbcType=VARCHAR}, HOTEL_IMG3 = #{hotelImg3,jdbcType=VARCHAR}, HOTEL_COST = #{hotelCost,jdbcType=NUMERIC}, HOTEL_EXTRAFEE = #{extraFee,jdbcType=NUMERIC}, HOTEL_RULE = #{rule,jdbcType=VARCHAR}
+		where HOTEL_NUM = #{hotelNum}
+	</update>
+	
+	<!-- <delete id="delHotel" parameterType="int">
+		DELETE FROM HOTELS
+		WHERE HOTEL_NUM = #{hotelNum}
+	</delete> -->
+	
+	
+</mapper>

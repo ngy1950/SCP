@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="namgiyun.home.payment.dao.mapper.PaymentMapper">
+	<insert id="addPay" parameterType="payment">
+		insert into payments
+		values (payNum_SEQ.nextval, #{payType ,jdbcType=VARCHAR}, #{payLastName ,jdbcType=VARCHAR}, #{payFirstName ,jdbcType=VARCHAR}, #{payNum ,jdbcType=VARCHAR}, #{payCvv ,jdbcType=VARCHAR}, #{payMonth ,jdbcType=VARCHAR}, #{payYear ,jdbcType=VARCHAR}, #{payAddress ,jdbcType=VARCHAR}, #{payCountry ,jdbcType=VARCHAR})
+	</insert>
+</mapper>

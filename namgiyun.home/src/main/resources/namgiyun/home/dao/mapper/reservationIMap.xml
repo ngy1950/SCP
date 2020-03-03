@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="namgiyun.home.reservation.dao.mapper.ReservationMapper">	
+	<select id="userReservaton_List" parameterType="string" resultType="reservation"> 
+		select re_list.resv_state resvState, re_list.pay_state payState, re.user_name userName, re.hotel_name hotelName, to_char(re.resv_checkin, 'yyyy-mm-dd') resvCheckIn, to_char(re.resv_checkout, 'yyyy-mm-dd') resvCheckOut, re.resv_guest resvGuest, re.resv_cost resvCost, re.resv_name resvName, re.resv_num resvNum, re.resv_user_id userId
+		from reservation_lists re_list,
+		    (select us.user_name, ho.hotel_name, ho.resv_num, ho.resv_checkin, ho.resv_checkout, ho.resv_guest, ho.resv_cost, ho.resv_name, ho.resv_user_id
+			 from (select ho.user_id, ho.hotel_name, re.resv_num, re.resv_checkin, re.resv_checkout, re.resv_guest, re.resv_cost, re.resv_name, re.user_id resv_user_id
+			       from reservations re, hotels ho 
+			       where re.hotel_num = ho.hotel_num and re.user_id = #{userId}) ho, users us
+			 where ho.user_id = us.user_id) re
+		where re_list.resv_num = re.resv_num
+		order by 1, 6 desc
+	</select>
+	
+	<select id="hostReservation_List" parameterType="string" resultType="reservation">
+		select re.resvNum, to_char(re.resvCheckIn,'yyyy-mm-dd') resvCheckIn, to_char(re.resvCheckOut,'yyyy-mm-dd') resvCheckOut, re.resvGuest, re.resvCost,re.resvName,re.resvEmail, re.resvPhone, re.resvComment, re.userId, re.hotelNum, re.hostId, relist.resv_state resvState, relist.pay_state payState, re.hotelName
+		from reservation_lists relist,
+			(select
+			re.resv_num resvNum, re.resv_checkin resvCheckIn, re.resv_checkout resvCheckOut, re.resv_guest resvGuest, re.resv_cost resvCost, re.resv_name resvName, re.resv_email resvEmail, re.resv_phone resvPhone, re.resv_comment resvComment, re.user_id userId, ho.hotel_num hotelNum, ho.hostId, ho.hotelName
+			from reservations re,  
+				(select hotel_num, user_id hostId, hotel_name hotelName
+				 from hotels
+				 where user_id = #{userId}) ho
+			where re.hotel_num = ho.hotel_num
+			) re
+		where relist.resv_num = re.resvNum
+	</select>
+	
+	<select id="getCalender" parameterType="string" resultType="calender">
+		select to_char(re.resvCheckIn,'yyyy-mm-dd') resvCheckIn, to_char(re.resvCheckOut,'yyyy-mm-dd') resvCheckOut, re.resvName, re.resvPhone
+		from reservation_lists relist,
+			(select
+			 re.resv_num resvNum, re.resv_checkin resvCheckIn, re.resv_checkout resvCheckOut, re.resv_guest resvGuest, re.resv_cost resvCost, re.resv_name resvName, re.resv_email resvEmail, re.resv_phone resvPhone, re.resv_comment resvComment, re.user_id userId, ho.hotel_num hotelNum, ho.hostId, ho.hotelName
+			 from reservations re,  
+				(select hotel_num, user_id hostId, hotel_name hotelName
+				 from hotels
+				 where user_id = #{userId}) ho
+			where re.hotel_num = ho.hotel_num
+			) re
+		where relist.resv_num = re.resvNum
+	</select>
+	
+	<delete id="del_reservation" parameterType="int">
+		delete 
+		from reservations
+		where resv_num = #{resvNum}
+	</delete>
+	
+	<delete id="del_payments" parameterType="int">
+		delete 
+		from payments
+		where resv_num = #{resvNum}
+	</delete>
+	
+	<delete id="del_reservation_lists" parameterType="int">
+		delete 
+		from reservation_lists
+		where resv_num = #{resvNum}
+	</delete>
+	
+	
+	<select id="guest" parameterType="int" resultType="int">
+		select hotel_guest hotelGuest
+		from hotels
+		where hotel_num = #{hotelNum}
+	</select>
+	
+	
+	<select id="cost" parameterType="int" resultType="reservation">
+		select hotel_num hotelNum, hotel_cost resvCost, hotel_extrafee hotelExtrafee
+		from hotel_details
+		where hotel_num = #{hotelNum}
+	</select>
+	
+	<insert id="addReservation" parameterType="reservation">
+		insert into reservations
+		values (RESERVATION_SEQ.nextval, #{resvCheckIn}, #{resvCheckOut}, #{resvGuest}, #{resvCost}, #{resvName}, #{resvEmail ,jdbcType=VARCHAR}, #{resvPhone}, #{resvComment ,jdbcType=VARCHAR}, #{userId}, #{hotelNum})
+	</insert>
+	
+	<insert id="addReservationList" parameterType="reservationList">
+		insert into reservation_Lists
+		values (RESERVATION_SEQ.currval, #{resvState}, #{payState})
+	</insert>
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

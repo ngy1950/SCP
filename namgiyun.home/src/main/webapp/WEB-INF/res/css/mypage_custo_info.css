@@ -1,0 +1,24 @@
+@charset "EUC-KR";
+
+.mypage_update{
+    float: left;
+    margin-top: 8%;
+    width: 50%;
+    height: 800px;
+}
+.update_tit{margin-bottom: 10%;margin-left: 5%;}
+.table_info{
+    margin-left: 5%;
+    width: 500px;
+    height: 500px;
+}
+.table_info tbody{width: 20%;}
+.table_info tr{
+  
+margin-top: 30%;
+  
+margin-left: 20%;
+}
+.table_info tr th{width: 150px;}
+.table_info span{}
+.update_btn{float: left;width: 200px;}

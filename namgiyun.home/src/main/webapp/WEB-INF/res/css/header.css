@@ -1,0 +1,36 @@
+.navbar {
+   background-color: #3c763d6b;
+   padding: 20px;
+   margin: 0px;
+   padding-right: 3px;
+}
+
+.navbar a {
+   font-weight: bold;
+   color: black;
+}
+
+.navbar-right {
+   padding-top: 1%;
+}
+
+.navbar-brand {
+   padding: 0px;
+   margin: 0px;
+   display: contents;
+}
+
+.navbar-brand .glyphicon-home{
+   font-size: 3em;
+}
+
+.form-inline {
+   margin: 270px;
+   border: 1px solid;
+   width: 55%;
+   margin-left: 22%;
+   padding: 15px;
+   background-color: #3c763d6b;
+   border-color: #3c763d6b;
+   font-family: auto;
+}
