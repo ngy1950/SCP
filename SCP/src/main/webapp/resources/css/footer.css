@@ -1,0 +1,36 @@
+@charset "EUC-KR";
+.footer_menu .footer_menu_inner, .footer_company_inner{width:1084px;margin-left:auto;margin-right: 20px;margin-top:auto;}
+.footer_company_inner .footer_info:after, .footer_guide dt:after{content:"";display:table;clear:both}
+.footer_menu .footer_menu_inner, .footer_menu .footer_menu_inner{font-size:12px;line-height:0;color:transparent;}
+.footer_wrap{/* overflow:hidden; */width:100%;text-align:left;}
+.foot_etc{display:inline-block;}
+.footer_menu{background: #f5f5f5; height: 60px;}
+.footer_menu .footer_menu_inner{height:30px;padding-top:30px;margin-left: 25%;margin-right: auto;}
+.footer_menu .footer_menu_inner li{/* float: left; */margin-right: 35px;}
+.footer_menu .footer_menu_inner ul{text-align:center; height:10px}
+.footer_menu .footer_menu_inner li:first-child{margin-left:0px}
+.footer_menu .footer_menu_inner li .company{background-position: -100px -213px; width:76px; height:23px}
+.footer_menu .footer_menu_inner li .private{background-position: -361px -101px; width:143px; height:23px}
+.footer_menu .footer_menu_inner li .document{background-position: -361px -177px; width:77px; height:23px}
+.footer_menu .footer_menu_inner li .elect{background-position: -361px -103px; width:94px; height:23px}
+.footer_menu .footer_menu_inner li .custom{background-position: -361px -141px; width:70px; height:23px;  margin-left:30px}
+.footer_menu .footer_menu_inner li a{display:block; width:100%; height:100%; font-size:12px; font-color: #000000; float:left; text-decoration:none}
+
+
+.footer_company{background: #fff}
+.footer_company_inner{position:relative; padding:15px 15px; margin-left:200px}
+.footer_company_inner .footer_info{padding: 0 0 0 173px;width: 850px;}
+
+
+.footer_logo {position:absolute; top:30px; left:0}
+.footer_logo a{display:block; width:154px; height:72px; background: url("footerlogo.jsp") no repeat 0 0; font-size:0; text-indent: -9999px}
+
+
+.footer_info .copyright{color: #aaa;font-size: 11px;line-height:18px;margin-top:30px;width:300px;float:left;margin-left: 5%;}
+
+.footer_guide{float:right;margin-left: 10px;padding-left:60px;font-size:11px;border-left:1px solid #f5f5f5;color: #666;}
+.footer_guide dt{padding-bottom:6px}
+.footer_guide .title_1{background-position:-117px -228px; width:214px; height:14px; margin:5px 0 7px}
+.footer_guide .phone {font-family: tahoma; font-weight:bold; font-size:18px; color:#666}
+.footer_guide dd{padding-top:3px;}
+
